@@ -66,11 +66,11 @@ jobs:
 
     - name: Terraform plan for ${{ github.ref_name }} environment 
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: terraform -chdir=app.tf plan -var-file=app.tf/envs/${{ github.ref_name }}.tfvars 
+      run: terraform -chdir=app.tf plan -var-file=envs/${{ github.ref_name }}.tfvars 
 
     - name: Terraform apply for ${{ github.ref_name }} environment 
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: terraform -chdir=app.tf apply -auto-approve -var-file=app.tf/envs/${{ github.ref_name }}.tfvars
+      run: terraform -chdir=app.tf apply -auto-approve -var-file=envs/${{ github.ref_name }}.tfvars
     
     - name: Update kube config
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
