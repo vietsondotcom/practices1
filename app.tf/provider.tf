@@ -13,7 +13,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = "ap-southeast-1" # switch other ap-southeast-1 or
+  region  = "ap-northeast-1" # switch other ap-northeast-1 or
   #profile = "sontv-devops"
 }
 provider "random" {}
