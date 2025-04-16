@@ -6,6 +6,11 @@ on:
       - dev 
       - main # Trigger action on pushes to main branch
 
+permissions:
+  contents: read 
+  id-token: write
+  security-events: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
