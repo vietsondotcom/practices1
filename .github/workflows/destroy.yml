@@ -24,9 +24,9 @@ jobs:
       - name: Configuration the AWS Credential 
         uses: aws-actions/configure-aws-credentials@v4
         with:
-        role-to-assume: arn:aws:iam::376129850044:role/sontv-github-svc-practices1
-        aws-region: ap-northeast-1
-        role-session-name: sontv-github-svc-practices1
+          role-to-assume: arn:aws:iam::376129850044:role/sontv-github-svc-practices1
+          aws-region: ap-northeast-1
+          role-session-name: sontv-github-svc-practices1
 
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v3
