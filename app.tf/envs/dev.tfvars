@@ -68,7 +68,7 @@ cluster_endpoint_public_access = true
 
 api_gateways = {
   "rest_weather" = {
-    aws_api_gateway_rest_api_name        = "rest-weather-simple"
+    aws_api_gateway_rest_api_name        = "sontv-dev-rest-weather-simple"
     aws_api_gateway_rest_api_description = "porpose for test the rest weather"
     api_gateway_protocol                 = "HTTP"
     authorizers                          = {}
