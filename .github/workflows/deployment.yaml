@@ -62,7 +62,7 @@ jobs:
         cli_version: 1.11.3 #verify with your end terraform version
 
     - name: Terraform init
-      run: terraform -chdir=app.tf init -backend-config="key=github_ci/infra/${{ github.ref_name }}-provision.tfstate"
+      run: terraform -chdir=app.tf init -backend-config="key=github_ci/practices1/${{ github.ref_name }}.tfstate"
 
     - name: Terraform plan for ${{ github.ref_name }} environment 
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
