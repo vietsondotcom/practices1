@@ -59,7 +59,7 @@ jobs:
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v3
       with:
-        cli_version: 1.11.3 #verify with your end terraform version
+        terraform_version: 1.11.3 #verify with your end terraform version
 
     - name: Terraform init
       run: terraform -chdir=app.tf init -backend-config="key=github_ci/practices1/${{ github.ref_name }}.tfstate"
