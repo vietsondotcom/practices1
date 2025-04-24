@@ -35,6 +35,13 @@ eks_config = {
   ]
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"],
   eks_cw_logging                       = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::376129850044:role/sontv-github-svc-practices1"
+      username = "github-ci"
+      groups   = ["system:masters"]
+    }
+  ]
 }
 vm-config = {
   vm1 = {
