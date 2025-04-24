@@ -75,6 +75,12 @@ jobs:
     - name: Update kube config
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
     
+    - name: Debug identity
+      run: |
+        aws sts get-caller-identity
+        kubectl config view --minify
+        kubectl auth can-i list pods
+
     - name: Check current kube context
       run: |
         kubectl config get-contexts
