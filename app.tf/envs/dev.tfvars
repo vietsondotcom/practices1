@@ -23,12 +23,12 @@ eks_config = {
   endpoint_public_access                         = true
   aws_auth_users = [
     {
-      userarn  = "arn:aws:iam::539247450054:user/eks-ops"
+      userarn  = "arn:aws:iam::376129850044:user/eks-ops"
       username = "eks-ops"
       groups   = ["system:masters"]
     },
     {
-      userarn  = "arn:aws:iam::539247450054:user/devops"
+      userarn  = "arn:aws:iam::376129850044:user/devops"
       username = "devops"
       groups   = ["system:masters"]
     },
@@ -57,7 +57,7 @@ bastion_definition = {
     bastion_monitoring          = true
     bastion_name                = "bastion"
     bastion_public_key          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDWBo4K5WRbXPsldPwfV+OklXw+Sa8Rt+fJWPW4xGy/QL2M9j+PDaH4N+Lh29GanaNugMpmzGgDH0cb3DtgSbBlld9YKpO57Ew4alAjoIm/3qJRIIdTu8xMrvm8dvSEs760/MUoqxrt04ExPmvghy3hoyTBpYOwUWnc8R2KP5gmrzldbt1lyKytHujHhFel4aeefxctRFZTfbt7+2X5QE4dMB7po55soxTkcGRyghd8/RbJJYi1jvuA5zU1ecpetgu6DtPkcKWKJMz+e6y2N4xHyg8r8UU28O4eJ+LXQQA48HbX8zXzwteSOBS7b1C42yXFwnQXct+QR2X7D88GkAJt rsa-key-20220711"
-    trusted_ips                 = ["42.118.208.79/32"]
+    trusted_ips                 = ["1.52.236.85/32"]
     user_data_base64            = null
     ext-tags = {
       "fucnt" = "demo-tf"
