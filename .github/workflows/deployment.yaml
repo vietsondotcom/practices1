@@ -74,18 +74,19 @@ jobs:
     
     - name: Update kube config
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
-    
-    - name: Debug identity
-      run: |
-        aws sts get-caller-identity
-        kubectl config view --minify
-        kubectl auth can-i list pods
 
-    - name: Check current kube context
+    - name: Create imagePullSecret for Docker Hub (if not exists)
       run: |
-        kubectl config get-contexts
-        kubectl config current-context
-        kubectl get ns
+        ENV=prod
+        if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          ENV=dev
+        fi
+        kubectl get secret dockerhub -n max-weather-dev || \
+        kubectl create secret docker-registry dockerhub \
+          --docker-username=${{ secrets.DOCKER_USERNAME }} \
+          --docker-password=${{ secrets.DOCKERHUB_TOKEN }} \
+          --docker-email=tvs100392@gmail.com \
+          --namespace=max-weather-${ENV}
 
     - name: Apply Kubernetes manifest
       run: |
