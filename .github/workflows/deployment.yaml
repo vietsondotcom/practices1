@@ -86,6 +86,7 @@ jobs:
           --docker-username=${{ secrets.DOCKER_USERNAME }} \
           --docker-password=${{ secrets.DOCKERHUB_TOKEN }} \
           --docker-email=tvs100392@gmail.com \
+          --docker-server=https://index.docker.io/v1/ \
           --namespace=max-weather-${ENV}
 
     - name: Apply Kubernetes manifest
