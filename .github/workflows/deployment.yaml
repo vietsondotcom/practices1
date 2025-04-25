@@ -50,16 +50,16 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Configure AWS credentials
-      # uses: aws-actions/configure-aws-credentials@v4
-      # with:
-      #   role-to-assume: arn:aws:iam::376129850044:role/sontv-github-svc-practices1
-      #   aws-region: ap-northeast-1
-      #   role-session-name: sontv-github-svc-practices1
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: arn:aws:iam::376129850044:role/sontv-github-svc-practices1
         aws-region: ${{ secrets.AWS_REGION }}
+        role-session-name: sontv-github-svc-practices1
+      # uses: aws-actions/configure-aws-credentials@v1
+      # with:
+      #   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   aws-region: ${{ secrets.AWS_REGION }}
     
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v3
@@ -79,6 +79,20 @@ jobs:
     
     - name: Update kube config
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+    - name: Install eksctl
+      run: |
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin
+
+    - name: Add IAM Role to aws-auth ConfigMap
+      run: |
+            eksctl create iamidentitymapping \
+            --cluster ${{ secrets.EKS_CLUSTER_NAME }} \
+            --region ${{ secrets.AWS_REGION }} \
+            --arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1 \
+            --group system:masters \
+            --username github-ci
 
     # - name: Add IAM Role to aws-auth ConfigMap
     #   run: |
