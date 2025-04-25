@@ -83,7 +83,7 @@ jobs:
         fi
         kubectl get secret dockerhub -n max-weather-dev || \
         kubectl create secret docker-registry dockerhub \
-          --docker-username=${{ secrets.DOCKER_USERNAME }} \
+          --docker-username=${{ secrets.DOCKERHUB_USERNAME }} \
           --docker-password=${{ secrets.DOCKERHUB_TOKEN }} \
           --docker-email=tvs100392@gmail.com \
           --docker-server=https://index.docker.io/v1/ \
