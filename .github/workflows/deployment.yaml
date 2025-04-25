@@ -77,65 +77,49 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: terraform -chdir=app.tf apply -auto-approve -var-file=envs/${{ github.ref_name }}.tfvars
     
+    - name: Debug EKS Cluster
+      run: |
+        aws eks list-clusters --region ap-northeast-1
+        aws eks describe-cluster --name ${{ secrets.EKS_CLUSTER_NAME }} --region ap-northeast-1
     - name: Update kube config
-      run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
-
+      run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ap-northeast-1
+    - name: Debug kubeconfig
+      run: |
+        cat ~/.kube/config
+        kubectl cluster-info
+        kubectl get nodes
     - name: Install eksctl
       run: |
-            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            sudo mv /tmp/eksctl /usr/local/bin
-
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+        sudo mv /tmp/eksctl /usr/local/bin
     - name: Add IAM Role to aws-auth ConfigMap
       run: |
-            eksctl create iamidentitymapping \
-            --cluster ${{ secrets.EKS_CLUSTER_NAME }} \
-            --region ${{ secrets.AWS_REGION }} \
-            --arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1 \
-            --group system:masters \
-            --username github-ci
-
-    # - name: Add IAM Role to aws-auth ConfigMap
-    #   run: |
-    #       eksctl create iamidentitymapping \
-    #       --cluster ${{ secrets.EKS_CLUSTER_NAME }} \
-    #       --region ${{ secrets.AWS_REGION }} \
-    #       --arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1 \
-    #       --group system:masters \
-    #       --username github-ci
-
-    # - name: Add IAM Role to aws-auth ConfigMap manually (if not exists)
-    #   run: |
-    #         kubectl get configmap aws-auth -n kube-system -o yaml | \
-    #         grep -q 'rolearn: arn:aws:iam::376129850044:role/sontv-github-svc-practices1' || \
-    #         kubectl patch configmap aws-auth -n kube-system --patch "$(cat <<EOF
-    #         apiVersion: v1
-    #         kind: ConfigMap
-    #         metadata:
-    #           name: aws-auth
-    #           namespace: kube-system
-    #         data:
-    #           mapRoles: |
-    #             - rolearn: arn:aws:iam::376129850044:role/sontv-github-svc-practices1
-    #               username: github-ci
-    #               groups:
-    #                 - system:masters
-    #         EOF
-    #         )"
-
+        eksctl create iamidentitymapping \
+          --cluster ${{ secrets.EKS_CLUSTER_NAME }} \
+          --region ap-northeast-1 \
+          --arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1 \
+          --group system:masters \
+          --username github-ci
+    - name: Create Namespace if not exists
+      run: |
+        ENV=prod
+        if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          ENV=dev
+        fi
+        kubectl create namespace max-weather-${ENV} --dry-run=client -o yaml | kubectl apply -f -
     - name: Create imagePullSecret for Docker Hub (if not exists)
       run: |
         ENV=prod
         if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
           ENV=dev
         fi
-        kubectl get secret dockerhub -n max-weather-dev || \
+        kubectl get secret dockerhub -n max-weather-${ENV} || \
         kubectl create secret docker-registry dockerhub \
           --docker-username=${{ secrets.DOCKERHUB_USERNAME }} \
           --docker-password=${{ secrets.DOCKERHUB_TOKEN }} \
           --docker-email=tvs100392@gmail.com \
           --docker-server=https://index.docker.io/v1/ \
           --namespace=max-weather-${ENV}
-
     - name: Apply Kubernetes manifest
       run: |
         ENV=prod
@@ -145,7 +129,6 @@ jobs:
         echo "current env deploy: ${ENV}"
         sed -i "s|ENV|${ENV}|g" app.api/k8s/manifest.yaml
         sed -i "s|CONTAINER_REGISTRY_BASE_URI|gacon9x/max-weather:${{ github.sha }}|g" app.api/k8s/manifest.yaml
-
         echo "viewing the manifest"
         cat app.api/k8s/manifest.yaml
         kubectl apply -f app.api/k8s/manifest.yaml
