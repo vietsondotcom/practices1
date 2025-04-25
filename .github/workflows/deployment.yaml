@@ -86,7 +86,7 @@ jobs:
         --principal-arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1  \
         --type STANDARD \
         --user github-ci \
-        --kubernetes-groups system:masters \
+        --kubernetes-groups Viewers \
         --region ${{ secrets.AWS_REGION }}
         aws eks associate-access-policy 
         --cluster-name ${{ secrets.EKS_CLUSTER_NAME }} \
