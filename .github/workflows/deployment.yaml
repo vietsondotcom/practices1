@@ -115,6 +115,13 @@ jobs:
           --docker-email=tvs100392@gmail.com \
           --docker-server=https://index.docker.io/v1/ \
           --namespace=max-weather-${ENV}
+    - name: Install cert-manager (with CRDs)
+      run: |
+          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+          echo "Waiting for cert-manager components to be ready..."
+          kubectl rollout status deployment/cert-manager -n cert-manager
+          kubectl rollout status deployment/cert-manager-webhook -n cert-manager
+          kubectl rollout status deployment/cert-manager-cainjector -n cert-manager
 
     - name: Apply Kubernetes manifest
       run: |
