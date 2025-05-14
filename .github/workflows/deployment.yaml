@@ -86,7 +86,6 @@ jobs:
         EXISTS=$(aws eks list-access-entries \
           --cluster-name "${{ env.CLUSTER_NAME }}" \
           --region "${{ env.AWS_REGION }}" \
-          --query "accessEntries[?principalArn=='arn:aws:iam::376129850044:role/sontv-github-svc-practices1']" \
           --output json)
         echo "Access check result: $EXISTS"
 
