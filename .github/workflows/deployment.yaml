@@ -80,16 +80,15 @@ jobs:
     - name: Update kube config
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
-    - name: Grant the access to eks cluster
+    - name: Ensure access entry for GitHub Actions
       run: |
         set -e
-        EXISTS=$(aws eks list-access-entries 
-          --cluster-name "$EKS_CLUSTER_NAME" \
-          --region "$AWS_REGION" \
-          --query "accessEntries[?principalArn=='arn:aws:iam::376129850044:role/sontv-github-svc-practices1']"
+        EXISTS=$(aws eks list-access-entries \
+          --cluster-name "${{ env.CLUSTER_NAME }}" \
+          --region "${{ env.AWS_REGION }}" \
+          --query "accessEntries[?principalArn=='arn:aws:iam::376129850044:role/sontv-github-svc-practices1']" \
           --output json)
-
-        echo "EXISTS=$EXISTS"
+        echo "Access check result: $EXISTS"
 
         if [[ "$EXISTS" == "[]" ]]; then
           echo "Access entry does not exist. Creating..."
@@ -109,8 +108,8 @@ jobs:
           echo "Access entry already exists. Skipping creation."
         fi
       env:
+        CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
-        EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
     - name: Create Namespace if not exists
       run: |
         ENV=prod
