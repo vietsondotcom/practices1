@@ -84,27 +84,27 @@ jobs:
       run: |
         set -e
         EXISTS=$(aws eks list-access-entries 
-        --cluster-name "$EKS_CLUSTER_NAME" \
-        --region "$AWS_REGION" \
-        --query "accessEntries[?principalArn=='arn:aws:iam::376129850044:role/sontv-github-svc-practices1']"
-        --output json)
-        
+          --cluster-name "$EKS_CLUSTER_NAME" \
+          --region "$AWS_REGION" \
+          --query "accessEntries[?principalArn=='arn:aws:iam::376129850044:role/sontv-github-svc-practices1']"
+          --output json)
+
         echo "EXISTS=$EXISTS"
 
         if [[ "$EXISTS" == "[]" ]]; then
           echo "Access entry does not exist. Creating..."
           aws eks create-access-entry --cluster-name ${{ secrets.EKS_CLUSTER_NAME }} \
-          --principal-arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1  \
-          --type STANDARD \
-          --user github-ci \
-          --kubernetes-groups Viewers \
-          --region ${{ secrets.AWS_REGION }}
+            --principal-arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1  \
+            --type STANDARD \
+            --user github-ci \
+            --kubernetes-groups Viewers \
+            --region ${{ secrets.AWS_REGION }}
           aws eks associate-access-policy \
-          --cluster-name ${{ secrets.EKS_CLUSTER_NAME }} \
-          --region ${{ secrets.AWS_REGION }} \
-          --principal-arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1  \
-          --access-scope type=cluster \
-          --policy-arn arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
+            --cluster-name ${{ secrets.EKS_CLUSTER_NAME }} \
+            --region ${{ secrets.AWS_REGION }} \
+            --principal-arn arn:aws:iam::376129850044:role/sontv-github-svc-practices1  \
+            --access-scope type=cluster \
+            --policy-arn arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy
         else
           echo "Access entry already exists. Skipping creation."
         fi
