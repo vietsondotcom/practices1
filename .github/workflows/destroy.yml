@@ -34,7 +34,7 @@ jobs:
           terraform_version: 1.11.3 #verify with your end terraform version
 
       - name: Terraform init
-        run: terraform -chdir=app.tf init -backend-config="key=github_ci/practices1/${{ github.ref_name }}.tfstate"
+        run: terraform -chdir=app.tf init -upgrade -backend-config="key=github_ci/practices1/${{ github.ref_name }}.tfstate"
       
       - name: Terraform destroy plan 
         if: ${{ inputs.confirmation == 'Confirm' }}
