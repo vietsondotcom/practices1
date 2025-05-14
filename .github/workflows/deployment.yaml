@@ -82,7 +82,9 @@ jobs:
 
     - name: Grant the access to eks cluster
       run: |
-        EXISTS=$(aws eks list-access-entries --cluster-name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }} \
+        EXISTS=$(aws eks list-access-entries 
+        --cluster-name "${{ secrets.EKS_CLUSTER_NAME }}" 
+        --region "${{ secrets.AWS_REGION }}" \
         --query "accessEntries[?principalArn=='arn:aws:iam::376129850044:role/sontv-github-svc-practices1']" --output json)
         
         if [[ "$EXISTS" == "[]" ]]; then
@@ -102,6 +104,7 @@ jobs:
         else
           echo "Access entry already exists. Skipping creation."
         fi
+        
     - name: Create Namespace if not exists
       run: |
         ENV=prod
